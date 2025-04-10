@@ -2,7 +2,17 @@ from anthropic import Anthropic
 from utils.config import ANTHROPIC_API_KEY
 
 class AnthropicClient:
-    def __init__(self):
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(AnthropicClient, cls).__new__(cls)
+            cls._instance._init_client()
+        return cls._instance
+
+    def _init_client(self):
+        from anthropic import Anthropic
+        from utils.config import ANTHROPIC_API_KEY
         self.client = Anthropic(api_key=ANTHROPIC_API_KEY)
 
     def answer_query_base(self, query: str, context_chunks: list[str], model="claude-3-haiku-20240307") -> str:
@@ -24,11 +34,8 @@ class AnthropicClient:
             model=model,
             max_tokens=2500,
             temperature=0,
-            messages=[
-                {"role": "user", "content": prompt}
-            ]
+            messages=[{"role": "user", "content": prompt}]
         )
 
         return response.content[0].text.strip()
 
-anthropic_client = AnthropicClient()

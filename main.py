@@ -1,9 +1,10 @@
 import streamlit as st
 from parsers.parser_factory import get_parser
 from utils.chunker import chunk_text
-from embeddings.voyage_client import embedding_client
+from embeddings.voyage_client import EmbeddingClient
+
 from core.retriever import retrieve_top_k
-from core.anthropic_client import anthropic_client
+from core.anthropic_client import AnthropicClient
 import spacy
 from geopy.geocoders import Nominatim
 import matplotlib.pyplot as plt
@@ -17,6 +18,8 @@ notifier.register(UIObserver())
 
 nlp = spacy.load("en_core_web_sm")
 geolocator = Nominatim(user_agent="rag_doc_map")
+embedding_client = EmbeddingClient()
+anthropic_client = AnthropicClient()
 
 def main():
     st.set_page_config(page_title="🗃️ Document Assistant", layout="wide")
